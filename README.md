@@ -1,4 +1,4 @@
-# Generatio-Cleaning---LatinGrammar
+# Generation-Cleaning---LatinGrammar
 Solution for the 2nd Evidence of the TC2037 Course at ITESM. Generation and Cleaning of Grammar. Armando Fuentes Silva - A01712074
 
 ## Latin
@@ -19,9 +19,53 @@ We can see that the slave is the one greeting the mistress. And this is always t
 
 The word order is what we call **SOV**, stands for Subject-Object-Verb.
 
-## Tree model
-
 ## Grammar
+Grammar in just the most global definition possible is thw whole system and structure of a language, basically how its structured a grammar includes a set of rules from which we can derive strings. These rules are statements of logical equivalence of the form: ψ → ω, where ψ and ω are strings.
+
+The example given in my lecture was the following: 
+
+Here is a very simple example of a grammar to generate the string "the dog saw a man in the park"
+
+    S -> NP VP
+    NP -> Det N | Det N PP
+    PP -> P NP
+    VP -> V NP | VP PP
+    Det -> 'the' | 'a'
+    N -> 'man' | 'dog' | 'park'
+    P -> 'in' | 'with'
+    V -> 'saw' | 'ate' | 'walked'
+
+So I made my grammar for a Latin phrase, let's check it.
+I'm using the phrase: 
+
+***"Puella agricola pulchra amat."***
+
+    S -> NP VP
+    NP -> NP Adj | N
+    VP -> NP V
+    N -> puella | agricola | vir
+    Adj -> pulchra | fessus
+    V -> amat | videt
+
+But as we saw priviously the word ****pulchra*** could modify both ***puella*** or ***agricola*** in this scenario, since latin is very ambiguous.
+So we end up with 2 meanings 
+
+***"The girl loves the beautiful farmer"***
+```
+      S
+     / \
+   NP   VP
+   |    /  \
+   N  NP    V
+ (Puella)(Agricola Pulchra)(Amat)
+```
+***"The beautiful girl loves the farmer "***
+```
+      S
+     / \
+   NP   VP
+(Puella Pulchra)  (Agricola Amat)
+```
 
 ## Get rid of ambiguity 
 
