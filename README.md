@@ -40,39 +40,98 @@ I'm using the phrase:
 
 ***"Puella agricola pulchra amat."***
 
-    S -> NP VP
-    NP -> NP Adj | N
-    VP -> NP V
-    N -> puella | agricola | vir
-    Adj -> pulchra | fessus
-    V -> amat | videt
+    S    → NP VP
+    VP   → NP V
+    NP   → NP Adj | NP NP | N | VP
+    
+    N    → puella | agricola | vir
+    Adj  → bonus | pulchra | fessus
+    V    → amat | videt
 
-But as we saw priviously the word ****pulchra*** could modify both ***puella*** or ***agricola*** in this scenario, since latin is very ambiguous.
-So we end up with 2 meanings 
+But as we saw priviously the adj could modify all nouns in this scenario, since latin is very ambiguous.
+We end up with lots of trees, including trees that say the same thing but are still different. 
 
-***"The girl loves the beautiful farmer"***
+***"The girl loves the good farmer"***
 ```
-      S
-     / \
-   NP   VP
-   |    /  \
-   N  NP    V
- (Puella)(Agricola Pulchra)(Amat)
+          S
+       /    \
+     NP      VP
+     |      /  \
+  puella   NP    V
+           / \
+     agricola bonus
+                  amat
+
 ```
-***"The beautiful girl loves the farmer "***
+***"The good girl loves the farmer."***
 ```
-      S
-     / \
-   NP   VP
-(Puella Pulchra)  (Agricola Amat)
+          S
+       /     \
+     NP       VP
+   /   \     /  \
+puella bonus NP  V
+             |   |
+         agricola amat
+
 ```
 
 ## Get rid of ambiguity 
+So, we have a problem, our grammar has to meanings, this ambiguity, the way we detect it more clearly, is that we can generate different trees to get different meanings, just like I did above, How don we fix it? We need to add intermediate states and productions that indicate a precedence, this eliminates the or between equivalent states.
 
-## Get rid of left recursion 
+The next grammar is designed to generate only one kind of tree for each structure: 
 
-## Final grammar
+    S    → NP VP
+    VP   → NP V
+    NP   → NP Adj | N
+    N    → puella | agricola | vir
+    Adj  → bonus | pulchra | fessus
+    V    → amat | videt
 
-## Tests 
+Now we get a single meaning.  
+
+***"Puella agricola fessus amat." (The girl loves the tired farmer)*** 
+
+```
+         S
+       /   \
+     NP     VP
+   /   \     /  \
+  NP  Adj  NP    V
+  |        |   \    \
+puella agricola bonus amat
+
+```
+
+Side note: When I talk about meaning I'm talking about the structure, I've added different nouns and adjectives for depth purposes 
+
+## Get rid of left recursion / Final grammar
+So we still have another problem to solve, do you notice, that we can go from NP, to NP again? 
+
+    NP   → NP Adj | N
+
+Well this generates a problem, we can just call NP infinite times to the left and just get a non-ending sentence, kind of weird right? Let's fix it.
+
+The way we fix it is the following: Substitute the productions presenting the left recursion, with two new productions, where the first element will be a terminal and use an intermediate state. 
+
+    S         → NP VP
+    NP        → N AdjList
+    AdjList   → Adj AdjList | ε
+    VP        → NP V
+    N         → puella | agricola | vir
+    Adj       → bonus | pulchra | fessus
+    V         → amat | videt
+
+***"Puella agricola bonus amat." (The girl loves the good farmer)*** 
+```
+         S
+       /   \
+     NP     VP
+   /   \     /  \
+  N  AdjList NP   V
+  |     |     |   |
+puella  ε  agricola bonus amat
+```
+
+AdjList is our intermediate state, and ε is the terminal one.
 
 ## Chomsky Hierarchy 
